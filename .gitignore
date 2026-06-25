@@ -1,0 +1,14 @@
+# Abhängigkeiten
+node_modules/
+
+# Kompilierter Code
+dist/
+
+# Logdateien
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Betriebssystem-Müll
+.DS_Store
+Thumbs.db
