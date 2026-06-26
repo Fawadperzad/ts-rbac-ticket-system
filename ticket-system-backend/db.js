@@ -1,11 +1,15 @@
 import mysql from 'mysql2';
+import dotenv from 'dotenv';
+
+// Lädt die Variablen aus deiner unsichtbaren .env-Datei
+dotenv.config();
 
 const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root', 
-  password: 'My$$Sql316', // ⚠️ Dein echtes Passwort eintragen!
-  database: 'ticket_system',
-  port: 3306,
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER, 
+  password: process.env.DB_PASSWORD, // 🔒 Jetzt absolut sicher geschützt!
+  database: process.env.DB_NAME,
+  port: process.env.PORT || 3306,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
