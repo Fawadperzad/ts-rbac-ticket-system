@@ -1,0 +1,43 @@
+<div style="padding: 20px; font-family: Arial, sans-serif">
+  <h1>🎫 Ticket-System (Frontend Mockup)</h1>
+  <p>Angular v19 verwendet jetzt moderne <em>Signals</em> für deine Test-Daten.</p>
+
+  <table
+    border="1"
+    cellpadding="10"
+    style="border-collapse: collapse; width: 100%; text-align: left"
+  >
+    <thead style="background-color: #f2f2f2">
+      <tr>
+        <th>ID</th>
+        <th>Titel</th>
+        <th>Beschreibung</th>
+        <th>Status</th>
+        <th>Ersteller</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ticket of tickets()">
+        <td>
+          <strong>{{ ticket.id }}</strong>
+        </td>
+        <td>{{ ticket.title }}</td>
+        <td>{{ ticket.description }}</td>
+        <td>
+          <span
+            style="
+              padding: 3px 8px;
+              border-radius: 4px;
+              font-weight: bold;
+              font-size: 12px;
+              background-color: #ffe6b3;
+            "
+          >
+            {{ ticket.status }}
+          </span>
+        </td>
+        <td>{{ ticket.createdBy }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
