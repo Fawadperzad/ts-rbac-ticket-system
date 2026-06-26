@@ -1,5 +1,6 @@
 # Abhängigkeiten
 node_modules/
+.env
 
 # Kompilierter Code
 dist/
