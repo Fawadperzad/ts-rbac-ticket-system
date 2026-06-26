@@ -17,7 +17,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let ticket of tickets()">
+      @for (ticket of tickets(); track ticket.id) {<tr>
         <td>
           <strong>{{ ticket.id }}</strong>
         </td>
@@ -37,7 +37,7 @@
           </span>
         </td>
         <td>{{ ticket.createdBy }}</td>
-      </tr>
+      </tr>}
     </tbody>
   </table>
 </div>

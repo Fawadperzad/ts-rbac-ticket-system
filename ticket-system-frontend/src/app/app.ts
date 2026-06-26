@@ -1,12 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { CommonModule } from '@angular/common'; // <-- Wichtig für Tabellen-Schleifen!
 import { MOCK_TICKETS } from './mock-tickets';
 import { Ticket } from './ticket.model';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, CommonModule], // <-- Hier CommonModule hinzugefügt
+  imports: [],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
