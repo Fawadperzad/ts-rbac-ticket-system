@@ -4,7 +4,11 @@
   "cli": {
     "packageManager": "npm",
     "analytics": false
+    
   },
+  "polyfills": [
+  "zone.js"
+],
   "newProjectRoot": "projects",
   "projects": {
     "ticket-system-frontend": {
@@ -68,7 +72,9 @@
         "test": {
           "builder": "@angular/build:unit-test"
         }
+        
       }
+      
     }
   }
 }

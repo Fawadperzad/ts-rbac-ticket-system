@@ -1,0 +1,52 @@
+<div class="ticket-container">
+  <h2>Support Tickets</h2>
+
+  @if (isLoading) {
+    <p style="color: #718096">Loading tickets from database...</p>
+  }
+
+  @if (errorMessage) {
+    <p
+      style="
+        color: #e53e3e;
+        font-weight: bold;
+        padding: 10px;
+        background: #fff5f5;
+        border-radius: 6px;
+      "
+    >
+      {{ errorMessage }}
+    </p>
+  }
+
+  @if (!isLoading && !errorMessage) {
+    <div class="ticket-grid">
+      @for (ticket of tickets; track ticket.id) {
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <h3>{{ ticket.title }}</h3>
+
+            <select
+              [ngModel]="ticket.status.toUpperCase()"
+              (ngModelChange)="onStatusChange(ticket, $event)"
+              [className]="'status-select ' + ticket.status.toLowerCase()"
+            >
+              <option value="OFFEN">Offen</option>
+              <option value="IN_BEARBEITUNG">In Bearbeitung</option>
+              <option value="GESCHLOSSEN">Geschlossen</option>
+            </select>
+          </div>
+
+          <p class="description">{{ ticket.description }}</p>
+
+          <div class="ticket-footer">
+            <span>ID: #{{ ticket.id }}</span>
+            <span>Agent ID: {{ ticket.created_by }}</span>
+          </div>
+        </div>
+      } @empty {
+        <p style="color: #718096">No tickets found in the database.</p>
+      }
+    </div>
+  }
+</div>
