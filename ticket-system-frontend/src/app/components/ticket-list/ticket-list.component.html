@@ -42,6 +42,12 @@
           <div class="ticket-footer">
             <span>ID: #{{ ticket.id }}</span>
             <span>Agent ID: {{ ticket.created_by }}</span>
+
+            @if (ticket.id !== undefined) {
+              <button (click)="onDeleteTicket(ticket.id)" class="delete-btn" title="Delete Ticket">
+                🗑️ Delete
+              </button>
+            }
           </div>
         </div>
       } @empty {

@@ -58,4 +58,21 @@ export class TicketListComponent implements OnInit {
       }
     });
   }
+
+  // Handles the deletion of a ticket after user confirmation
+onDeleteTicket(id: number): void {
+  // Ask the user for confirmation before permanently deleting the ticket
+  if (confirm('Are you sure you want to delete this ticket?')) {
+    this.ticketService.deleteTicket(id).subscribe({
+      next: () => {
+        // Filter out the deleted ticket from the local array to update the UI instantly
+        this.tickets = this.tickets.filter(ticket => ticket.id !== id);
+      },
+      error: (err) => {
+        console.error('Failed to delete ticket:', err);
+        alert('An error occurred while trying to delete the ticket.');
+      }
+    });
+  }
+}
 }

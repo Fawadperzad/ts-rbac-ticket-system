@@ -27,4 +27,11 @@ export class TicketService {
     // Sends a PUT or PATCH request to /api/tickets/:id
     return this.http.put<Ticket>(`${this.apiUrl}/${id}`, { status });
   }
+
+// Safely constructs the delete URL without accidental double slashes
+deleteTicket(id: number): Observable<any> {
+  // If apiUrl ends with a slash, strip it, then append /id
+  const url = this.apiUrl.endsWith('/') ? `${this.apiUrl}${id}` : `${this.apiUrl}/${id}`;
+  return this.http.delete(url);
+}
 }
