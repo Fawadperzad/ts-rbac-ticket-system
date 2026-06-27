@@ -27,9 +27,11 @@
             <h3>{{ ticket.title }}</h3>
 
             <select
-              [ngModel]="ticket.status.toUpperCase()"
+              [ngModel]="ticket.status ? ticket.status.toUpperCase() : 'OFFEN'"
               (ngModelChange)="onStatusChange(ticket, $event)"
-              [className]="'status-select ' + ticket.status.toLowerCase()"
+              [className]="
+                'status-select ' + (ticket.status ? ticket.status.toLowerCase() : 'offen')
+              "
             >
               <option value="OFFEN">Offen</option>
               <option value="IN_BEARBEITUNG">In Bearbeitung</option>
@@ -38,6 +40,33 @@
           </div>
 
           <p class="description">{{ ticket.description }}</p>
+
+          @if (ticket.id !== undefined) {
+            <div class="comments-section">
+              <h4>Comments</h4>
+
+              <div class="comments-list">
+                @for (comment of ticketComments[ticket.id]; track comment.id) {
+                  <div class="comment-item">
+                    <p class="comment-text">{{ comment.comment_text }}</p>
+                    <span class="comment-meta">By Agent #{{ comment.created_by }}</span>
+                  </div>
+                } @empty {
+                  <p class="no-comments">No comments yet. Be the first to reply!</p>
+                }
+              </div>
+
+              <div class="comment-form">
+                <input
+                  type="text"
+                  [(ngModel)]="newComments[ticket.id]"
+                  placeholder="Write a comment..."
+                  (keyup.enter)="onSubmitComment(ticket.id)"
+                />
+                <button (click)="onSubmitComment(ticket.id)">Send</button>
+              </div>
+            </div>
+          }
 
           <div class="ticket-footer">
             <span>ID: #{{ ticket.id }}</span>
