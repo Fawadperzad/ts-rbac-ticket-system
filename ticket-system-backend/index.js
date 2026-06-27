@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import db from './db.js';
+import db from './db.js'; // 👈 This handles your MySQL configuration perfectly!
 
-const app = express(); // 👈 Fixed: 'app' is properly initialized here!
+const app = express();
 const PORT = 3000;
 
 // MIDDLEWARES
@@ -38,23 +38,37 @@ app.get('/api/tickets', async (req, res) => {
   }
 });
 
-// B) Create a new ticket
-app.post('/api/tickets', async (req, res) => {
-  const { title, description, created_by } = req.body;
+// B) Create a new ticket comment (MySQL compatible)
+// B) Create a new ticket comment (Updated to match table name: ticket_comments)
+app.post('/api/tickets/:id/comments', async (req, res) => {
+  const ticketId = parseInt(req.params.id, 10);
+  const { comment_text, created_by } = req.body; 
+
+  if (isNaN(ticketId) || !comment_text) {
+    return res.status(400).json({ error: 'Comment text and a valid Ticket ID are required' });
+  }
+
   try {
+    // 1. Fixed: Changed table name to ticket_comments
     const [result] = await db.query(
-      'INSERT INTO tickets (title, description, created_by) VALUES (?, ?, ?)',
-      [title, description, created_by]
+      'INSERT INTO ticket_comments (ticket_id, comment_text, created_by) VALUES (?, ?, ?)',
+      [ticketId, comment_text, created_by || 1] // Fallback to 1 if no user context is passed yet
     );
-    res.status(201).json({ message: 'Ticket erstellt!', ticketId: result.insertId });
-  } catch (error) {
-    console.error('Fehler beim Erstellen:', error);
-    res.status(500).json({ error: 'Fehler beim Erstellen' });
+    
+    // 2. Fixed: Changed table name to ticket_comments
+    const [newComment] = await db.query(
+      'SELECT * FROM ticket_comments WHERE id = ?',
+      [result.insertId]
+    );
+
+    res.status(201).json(newComment[0]);
+  } catch (err) {
+    console.error('Database Error:', err);
+    res.status(500).json({ error: 'Failed to insert comment into database' });
   }
 });
 
-// C) UPDATE ticket status (With lowercase conversion for MySQL ENUM)
-// C) UPDATE ticket status (The "No-More-MySQL-Errors" Version)
+// C) UPDATE ticket status
 app.put('/api/tickets/:id', async (req, res) => {
   const ticketId = parseInt(req.params.id, 10);
   let { status } = req.body; 
@@ -64,19 +78,13 @@ app.put('/api/tickets/:id', async (req, res) => {
   }
 
   try {
-    // Try forcing UPPERCASE first ('ERLEDIGT')
     const uppercaseStatus = status.toUpperCase();
-    
-    // We try to update with UPPERCASE first
-    const [result] = await db.query(
+    await db.query(
       'UPDATE tickets SET status = ? WHERE id = ?',
       [uppercaseStatus, ticketId]
     );
-
     return res.json({ message: 'Status updated successfully', id: ticketId, status: uppercaseStatus });
-
   } catch (error) {
-    // If UPPERCASE fails with a truncation error, try lowercase ('erledigt')
     if (error.code === 'WARN_DATA_TRUNCATED' || error.errno === 1265) {
       try {
         const lowercaseStatus = status.toLowerCase();
@@ -86,30 +94,38 @@ app.put('/api/tickets/:id', async (req, res) => {
         );
         return res.json({ message: 'Status updated successfully (fallback)', id: ticketId, status: lowercaseStatus });
       } catch (innerError) {
-        console.error('Beide Formate (Groß/Klein) sind in MySQL fehlgeschlagen:', innerError);
+        console.error('Beide Formate sind fehlgeschlagen:', innerError);
         return res.status(500).json({ error: 'Datenbank akzeptiert den Status-Wert nicht.' });
       }
     }
-    
     console.error('Anderer Datenbank-Fehler:', error);
     res.status(500).json({ error: 'Status konnte nicht aktualisiert werden' });
   }
 });
 
-// SERVER START
-// ... Dein restlicher Code (Routen A, B, C) bleibt genau so ...
+// D) DELETE a ticket
+app.delete('/api/tickets/:id', async (req, res) => {
+  const ticketId = parseInt(req.params.id, 10);
+
+  if (isNaN(ticketId)) {
+    return res.status(400).json({ error: 'Invalid ticket ID provided' });
+  }
+
+  try {
+    const [result] = await db.query('DELETE FROM tickets WHERE id = ?', [ticketId]);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Ticket not found' });
+    }
+
+    return res.json({ message: 'Ticket deleted successfully', id: ticketId });
+  } catch (error) {
+    console.error('❌ Database error during ticket deletion:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // SERVER START
 app.listen(PORT, () => {
   console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
 });
-
-// 🔍 INSERT THIS TEST CODE HERE AT THE VERY BOTTOM:
-// You can safely delete this block to stop the printout:
-/*db.query("SHOW COLUMNS FROM tickets LIKE 'status'")
-  .then(([rows]) => {
-    if (rows && rows.length > 0) {
-      console.log("👉 ALLOWED STATUS VALUES IN MYSQL:", rows[0].Type);
-    }
-  })
-  .catch(err => {});*/
