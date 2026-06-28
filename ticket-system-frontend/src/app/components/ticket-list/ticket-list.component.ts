@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Kann entfernt werden, falls keine Pipes genutzt werden
+import { CommonModule } from '@angular/common'; 
 import { FormsModule } from '@angular/forms'; 
 import { TicketService } from '../../services/ticket';
-import { Ticket, TicketComment } from '../../models/ticket.model'; // 👈 Beide aus derselben Datei importiert
+import { AuthService } from '../../services/auth.service'; // 1. SCHRITT: AuthService Importieren!
+import { Ticket, TicketComment } from '../../models/ticket.model'; 
 
 @Component({
   selector: 'app-ticket-list',
@@ -16,16 +17,32 @@ export class TicketListComponent implements OnInit {
   isLoading: boolean = true;
   errorMessage: string = '';
 
-  // Speichert aktuelle Texteingaben für Kommentare, indiziert nach Ticket-ID
-  newComments: { [ticketId: number]: string } = {};
+  // 1. NEUE VARIABLEN HINZUFÜGEN:
+  availableUsers: any[] = [];
+  selectedUser: any = null;
 
-  // Speichert Arrays geladener Kommentare, indiziert nach Ticket-ID
+  newComments: { [ticketId: number]: string } = {};
   ticketComments: { [ticketId: number]: TicketComment[] } = {};
 
-  constructor(private ticketService: TicketService) {}
+  // 2. SCHRITT: Den AuthService im Constructor injizieren!
+  constructor(
+    private ticketService: TicketService,
+    private authService: AuthService 
+  ) {}
 
-  ngOnInit(): void {
+ngOnInit(): void {
     this.fetchTickets();
+    
+    // NEU: Lädt alle Benutzer beim Starten der Seite
+    this.authService.getAvailableUsers().subscribe({
+      next: (users) => this.availableUsers = users,
+      error: (err) => console.error('Fehler beim Laden der User:', err)
+    });
+
+    // NEU: Hört darauf, welcher User aktuell ausgewählt ist
+    this.authService.currentUser$.subscribe(user => {
+      this.selectedUser = user;
+    });
   }
 
   fetchTickets(): void {
@@ -34,7 +51,6 @@ export class TicketListComponent implements OnInit {
         this.tickets = data;
         this.isLoading = false;
 
-        // Automatisch Kommentare für jedes geladene Ticket abrufen
         this.tickets.forEach(ticket => {
           if (ticket.id) {
             this.loadComments(ticket.id);
@@ -49,7 +65,6 @@ export class TicketListComponent implements OnInit {
     });
   }
 
-  // Holt Kommentare für ein bestimmtes Ticket und speichert sie lokal
   loadComments(ticketId: number): void {
     this.ticketService.getComments(ticketId).subscribe({
       next: (comments: TicketComment[]) => {
@@ -59,25 +74,28 @@ export class TicketListComponent implements OnInit {
     });
   }
 
-  // Übermittelt einen neuen Kommentar
+  // 3. SCHRITT: Die ID des echten angemeldeten Benutzers nutzen!
   onSubmitComment(ticketId: number): void {
     const text = this.newComments[ticketId]?.trim();
     if (!text) return;
 
-    // Statische Agenten-ID 1, bis ein Login-System implementiert ist
-    const mockAgentId = 1; 
+    // Hol dir den aktuellen User aus dem Service
+    const currentUser = this.authService.getCurrentUserValue();
 
-    this.ticketService.addComment(ticketId, text, mockAgentId).subscribe({
+    // Sicherheitsprüfung: Nur kommentieren, wenn eingeloggt
+    if (!currentUser) {
+      alert('Bitte logge dich zuerst ein, um einen Kommentar zu schreiben!');
+      return;
+    }
+
+    // Wir übergeben jetzt die echte ID (currentUser.id) statt der festen 1!
+    this.ticketService.addComment(ticketId, text, currentUser.id).subscribe({
       next: (newComment: TicketComment) => {
         if (!this.ticketComments[ticketId]) {
           this.ticketComments[ticketId] = [];
         }
-        // Den neuen Kommentar sofort in die Timeline pushen
         this.ticketComments[ticketId].push(newComment);
-        
-        // Das Eingabefeld leeren
         this.newComments[ticketId] = '';
-        
       },
       error: (err) => {
         console.error('Error posting comment:', err);
@@ -86,9 +104,6 @@ export class TicketListComponent implements OnInit {
     });
   }
 
-  /**
-   * KORREKTUR: Typen-Sicherheit für das Status-Update hergestellt
-   */
   onStatusChange(ticket: Ticket, newStatus: 'OFFEN' | 'IN_BEARBEITUNG' | 'GESCHLOSSEN'): void {
     if (!ticket.id) return;
 
@@ -100,7 +115,7 @@ export class TicketListComponent implements OnInit {
       error: (error: any) => {
         console.error('Error updating ticket status:', error);
         alert('Failed to update status. Please check your backend route.');
-        this.fetchTickets(); // Bei Fehler Zustand aus DB neu laden
+        this.fetchTickets(); 
       }
     });
   }
@@ -111,11 +126,26 @@ export class TicketListComponent implements OnInit {
         next: () => {
           this.tickets = this.tickets.filter(ticket => ticket.id !== id);
         },
-       error: (err: any) => { // 👈 ': any' hinzugefügt
-  console.error('Error posting comment:', err);
-  alert('Failed to post comment. Check your server logs.');
-}
+        error: (err: any) => { 
+          console.error('Error deleting ticket:', err);
+          alert('Failed to delete ticket.');
+        }
       });
+      
+    }
+    
+  }
+  // NEU: Wird aufgerufen, wenn du im Dropdown einen anderen User auswählst
+  onUserChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const username = selectElement.value;
+    
+    if (username) {
+      this.authService.login(username).subscribe({
+        error: (err) => alert('Login fehlgeschlagen!')
+      });
+    } else {
+      this.authService.logout();
     }
   }
 }
