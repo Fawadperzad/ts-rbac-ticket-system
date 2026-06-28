@@ -38,8 +38,9 @@ app.get('/api/tickets', async (req, res) => {
   }
 });
 
-// B) Create a new ticket comment (MySQL compatible)
-// B) Create a new ticket comment (Updated to match table name: ticket_comments)
+// ==========================================
+// B-1) ROUTE: KOMMENTAR ERSTELLEN (Dein funktionierender Code)
+// ==========================================
 app.post('/api/tickets/:id/comments', async (req, res) => {
   const ticketId = parseInt(req.params.id, 10);
   const { comment_text, created_by } = req.body; 
@@ -49,13 +50,11 @@ app.post('/api/tickets/:id/comments', async (req, res) => {
   }
 
   try {
-    // 1. Fixed: Changed table name to ticket_comments
     const [result] = await db.query(
       'INSERT INTO ticket_comments (ticket_id, comment_text, created_by) VALUES (?, ?, ?)',
-      [ticketId, comment_text, created_by || 1] // Fallback to 1 if no user context is passed yet
+      [ticketId, comment_text, created_by || 1]
     );
     
-    // 2. Fixed: Changed table name to ticket_comments
     const [newComment] = await db.query(
       'SELECT * FROM ticket_comments WHERE id = ?',
       [result.insertId]
@@ -65,6 +64,35 @@ app.post('/api/tickets/:id/comments', async (req, res) => {
   } catch (err) {
     console.error('Database Error:', err);
     res.status(500).json({ error: 'Failed to insert comment into database' });
+  }
+});
+
+// ==========================================
+// B-2) NEUE ROUTE: TICKET ERSTELLEN (Hier haben wir auch die "?" eingebaut!)
+// ==========================================
+app.post('/api/tickets', async (req, res) => {
+  const { title, description, status, created_by } = req.body;
+
+  if (!title || !description) {
+    return res.status(400).json({ error: 'Title and description are required' });
+  }
+
+  try {
+    // Hier nutzen wir auch die korrekten "?" Platzhalter für MySQL
+    const [result] = await db.query(
+      'INSERT INTO tickets (title, description, status, created_by) VALUES (?, ?, ?, ?)',
+      [title, description, status || 'OFFEN', created_by || 1] 
+    );
+
+    const [newTicket] = await db.query(
+      'SELECT * FROM tickets WHERE id = ?',
+      [result.insertId]
+    );
+
+    res.status(201).json(newTicket[0]);
+  } catch (error) {
+    console.error('❌ Database error during ticket creation:', error);
+    res.status(500).json({ error: 'Failed to create ticket in database' });
   }
 });
 
