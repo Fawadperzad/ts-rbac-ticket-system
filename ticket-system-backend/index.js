@@ -157,3 +157,39 @@ app.delete('/api/tickets/:id', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
 });
+
+// ==========================================
+// C-1) USER-ROUTEN: Alle Benutzer abrufen
+// ==========================================
+app.get('/api/users', async (req, res) => {
+  try {
+    // Holt alle User aus der Tabelle, um sie im Login-Dropdown anzuzeigen
+    const [rows] = await db.query('SELECT id, username, role FROM users');
+    res.json(rows);
+  } catch (error) {
+    console.error('❌ Fehler beim Laden der Benutzer:', error);
+    res.status(500).json({ error: 'Failed to fetch users' });
+  }
+});
+
+// ==========================================
+// C-2) USER-ROUTEN: Login simulieren
+// ==========================================
+app.post('/api/login', async (req, res) => {
+  const { username } = req.body;
+  if (!username) {
+    return res.status(400).json({ error: 'Username is required' });
+  }
+
+  try {
+    const [rows] = await db.query('SELECT id, username, role FROM users WHERE username = ?', [username]);
+    if (rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    // Sende den gefundenen Benutzer zurück
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('❌ Login Fehler:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
