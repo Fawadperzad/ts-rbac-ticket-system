@@ -121,33 +121,55 @@ Initial data is seeded automatically on first run.
 
 ## 🧪 Testing
 
-### Run Tests
+### Backend Testing (Jest)
+The backend uses Jest for comprehensive testing with 11 passing tests:
+
 ```bash
 cd ticket-system-backend
-npm test                 # Run all tests
+npm test                 # Run all Jest tests
 npm run test:watch      # Run tests in watch mode
 npm run test:coverage   # Run tests with coverage report
 ```
 
-### Test Coverage
-- **API Endpoints**: Complete REST API testing
-- **Database Layer**: Connection and query testing
-- **Error Handling**: Validation and error scenarios
-- **Authentication**: Login and user validation
+**Backend Test Coverage:**
+- **Data Validation**: Ticket structure, required fields, status values, user roles
+- **Business Logic**: Status transitions, comment validation, email format
+- **API Structure**: Endpoint format validation, HTTP methods
+- **Utility Functions**: Timestamp generation, string trimming
+
+### Frontend Testing (Node.js Standalone)
+The frontend tests use a standalone Node.js approach with 12 passing tests:
+
+```bash
+cd ticket-system-frontend
+node test-standalone.js  # Run all frontend tests (12 tests)
+```
+
+**Frontend Test Coverage:**
+- **Model Validation**: User structure, email format, roles, ticket validation
+- **Form Logic**: Login form, ticket form validation
+- **State Management**: Authentication state, ticket filtering
+- **API Configuration**: Endpoint building, error handling
+
+### Total Test Coverage
+- **Backend Tests**: 11 passing (Jest)
+- **Frontend Tests**: 12 passing (Node.js)
+- **Total Tests**: 23 passing tests
+- **Coverage**: Complete validation, business logic, and API testing
 
 ### Test Reports
-After running `npm run test:coverage`, view the coverage report:
+After running backend coverage:
 ```bash
+cd ticket-system-backend
+npm run test:coverage
 open coverage/lcov-report/index.html  # View detailed coverage
 ```
 
-### Frontend Testing
+### Continuous Integration
+Both test suites are ready for CI/CD integration:
 ```bash
-cd ticket-system-frontend
-npm test                    # Run Angular tests
-npm run test:watch         # Run tests in watch mode  
-npm run test:coverage      # Run tests with coverage
-npm run test:ci           # Run tests for CI/CD
+# Full test suite
+npm run test:all         # Runs both backend and frontend tests
 ```
 
 ## 🔧 Development

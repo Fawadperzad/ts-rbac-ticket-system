@@ -1,0 +1,24 @@
+{
+  "name": "mein-ticket-system",
+  "version": "1.0.0",
+  "description": "Full-stack ticket management system with Angular frontend and Node.js backend",
+  "scripts": {
+    "test:all": "cd ticket-system-backend && npm test && cd ../ticket-system-frontend && node test-standalone.js",
+    "test:backend": "cd ticket-system-backend && npm test",
+    "test:frontend": "cd ticket-system-frontend && node test-standalone.js",
+    "test:coverage": "cd ticket-system-backend && npm run test:coverage",
+    "build": "cd ticket-system-backend && npm run build && cd ../ticket-system-frontend && npm run build",
+    "start": "docker compose up --build"
+  },
+  "keywords": [
+    "ticket-system",
+    "angular",
+    "nodejs",
+    "express",
+    "mysql",
+    "docker",
+    "full-stack"
+  ],
+  "author": "Fawad Perzad",
+  "license": "MIT"
+}
