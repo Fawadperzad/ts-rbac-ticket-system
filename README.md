@@ -119,6 +119,37 @@ The system includes:
 
 Initial data is seeded automatically on first run.
 
+## 🧪 Testing
+
+### Run Tests
+```bash
+cd ticket-system-backend
+npm test                 # Run all tests
+npm run test:watch      # Run tests in watch mode
+npm run test:coverage   # Run tests with coverage report
+```
+
+### Test Coverage
+- **API Endpoints**: Complete REST API testing
+- **Database Layer**: Connection and query testing
+- **Error Handling**: Validation and error scenarios
+- **Authentication**: Login and user validation
+
+### Test Reports
+After running `npm run test:coverage`, view the coverage report:
+```bash
+open coverage/lcov-report/index.html  # View detailed coverage
+```
+
+### Frontend Testing
+```bash
+cd ticket-system-frontend
+npm test                    # Run Angular tests
+npm run test:watch         # Run tests in watch mode  
+npm run test:coverage      # Run tests with coverage
+npm run test:ci           # Run tests for CI/CD
+```
+
 ## 🔧 Development
 
 ### Local Development (without Docker)
