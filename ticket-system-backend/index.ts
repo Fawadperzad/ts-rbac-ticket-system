@@ -1,8 +1,8 @@
 import express from 'express';
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import type { RowDataPacket, ResultSetHeader } from 'mysql2';
-import db from './db.js';
+import db, { verifyDatabaseConnection } from './db.js';
 
 // Interfaces für Typensicherheit deklarieren
 interface User extends RowDataPacket {
@@ -33,12 +33,24 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MIDDLEWARES
-app.use(cors());
-app.use(express.json());
+app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+app.use(express.json({ limit: '1mb' }));
 
 // 1. HOME ROUTE
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send('Das Backend des Ticket-Systems läuft stabil auf TypeScript! 🚀');
+});
+
+
+
+app.get('/health', async (_req: Request, res: Response) => {
+  try {
+    await verifyDatabaseConnection();
+    res.json({ status: 'ok' });
+  } catch (error) {
+    console.error('Health check failed:', error);
+    res.status(503).json({ status: 'error' });
+  }
 });
 
 // ==========================================
@@ -209,7 +221,24 @@ app.delete('/api/tickets/:id', async (req: Request, res: Response) => {
   }
 });
 
-// SERVER START
-app.listen(PORT, () => {
-  console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'Internal server error' });
 });
+
+const startServer = async () => {
+  try {
+    await verifyDatabaseConnection();
+    app.listen(PORT, () => {
+      console.log(`🚀 Server läuft auf http://localhost:${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Server konnte nicht starten:', error);
+    process.exit(1);
+  }
+};
+
+process.on('SIGINT', () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));
+
+startServer();

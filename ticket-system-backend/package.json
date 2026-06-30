@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "node --no-warnings dist/index.js",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "start": "node dist/index.js",
+    "start:prod": "pm2-runtime start ecosystem.config.cjs"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "mysql2": "^3.22.5"
+    "mysql2": "^3.22.5",
+    "pm2": "^5.4.2"
   }
 }

@@ -1,0 +1,36 @@
+# Multi-stage build: Frontend + Backend in one container
+
+# Stage 1: Build Angular frontend
+FROM node:20-alpine AS frontend-builder
+WORKDIR /app
+COPY ticket-system-frontend/package*.json ./
+RUN npm install
+COPY ticket-system-frontend ./
+RUN npm run build
+
+# Stage 2: Build TypeScript backend
+FROM node:20-alpine AS backend-builder
+WORKDIR /app
+COPY ticket-system-backend/package*.json ./
+RUN npm install
+COPY ticket-system-backend ./
+RUN npm run build
+
+# Stage 3: Runtime container with both frontend and backend
+FROM node:20-alpine
+WORKDIR /app
+
+# Install wget for healthcheck
+RUN apk add --no-cache wget
+
+# Copy backend
+COPY --from=backend-builder /app/dist ./dist
+COPY --from=backend-builder /app/node_modules ./node_modules
+COPY --from=backend-builder /app/package.json ./
+
+# Copy built frontend
+COPY --from=frontend-builder /app/dist/ticket-system-frontend/browser ./frontend-build
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

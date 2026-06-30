@@ -1,0 +1,10 @@
+{
+  "build": {
+    "builder": "dockerfile",
+    "dockerfilePath": "Dockerfile.unified"
+  },
+  "deploy": {
+    "restartPolicyType": "on-failure",
+    "healthcheckPath": "/health"
+  }
+}

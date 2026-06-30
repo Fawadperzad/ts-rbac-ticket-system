@@ -1,5 +1,120 @@
-<app-ticket-form (ticketCreated)="onTicketCreated()"></app-ticket-form>
+<div
+  class="dashboard-container"
+  style="
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    font-family:
+      'Segoe UI',
+      system-ui,
+      -apple-system,
+      sans-serif;
+    background-color: #f8fafc;
+  "
+>
+  @if (selectedUser) {
+    <div
+      class="user-header-card"
+      style="
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 16px 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      "
+    >
+      <div style="display: flex; align-items: center; gap: 16px">
+        <div
+          style="
+            width: 48px;
+            height: 48px;
+            background: #e0f2fe;
+            color: #0369a1;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 18px;
+          "
+        >
+          {{ selectedUser.username?.substring(0, 2).toUpperCase() || 'U' }}
+        </div>
+        <div>
+          <h2 style="margin: 0; font-size: 18px; color: #0f172a; font-weight: 600">
+            Logged in as: {{ selectedUser.username }}
+          </h2>
+          <p style="margin: 4px 0 0 0; font-size: 14px; color: #64748b">
+            ID: #{{ selectedUser.id }}
+          </p>
+        </div>
+      </div>
 
-<hr style="border: 0; border-top: 1px solid #e0e0e0; margin: 40px 0" />
+      <span
+        [style.background]="
+          selectedUser.role === 'ADMIN'
+            ? '#fee2e2'
+            : selectedUser.role === 'AGENT'
+              ? '#fef3c7'
+              : '#dcfce7'
+        "
+        [style.color]="
+          selectedUser.role === 'ADMIN'
+            ? '#991b1b'
+            : selectedUser.role === 'AGENT'
+              ? '#92400e'
+              : '#166534'
+        "
+        style="
+          padding: 6px 12px;
+          border-radius: 9999px;
+          font-size: 13px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+        "
+      >
+        🛡️ {{ selectedUser.role }}
+      </span>
+    </div>
+  } @else {
+    <div
+      class="guest-banner"
+      style="
+        background: #f1f5f9;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        margin-bottom: 24px;
+      "
+    >
+      <p style="margin: 0; color: #475569; font-size: 15px; font-weight: 500">
+        ⚠️ Viewing system as <strong>Guest View</strong>. Please select a user profile to simulate
+        permissions.
+      </p>
+    </div>
+  }
 
-<app-ticket-list></app-ticket-list>
+  <section style="margin-bottom: 32px">
+    <app-ticket-form></app-ticket-form>
+  </section>
+
+  <main class="dashboard-content">
+    <div
+      style="
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      "
+    >
+      <app-ticket-list></app-ticket-list>
+    </div>
+  </main>
+</div>

@@ -4,11 +4,7 @@
   "cli": {
     "packageManager": "npm",
     "analytics": false
-    
   },
-  "polyfills": [
-  "zone.js"
-],
   "newProjectRoot": "projects",
   "projects": {
     "ticket-system-frontend": {
@@ -31,6 +27,12 @@
             ],
             "styles": [
               "src/styles.css"
+            ],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.prod.ts"
+              }
             ]
           },
           "configurations": {

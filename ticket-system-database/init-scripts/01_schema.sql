@@ -1,5 +1,6 @@
 USE ticket_system;
 -- 1. Vorhandene Tabellen löschen (falls das Skript neu gestartet wird)
+DROP TABLE IF EXISTS comments;
 DROP TABLE IF EXISTS tickets;
 DROP TABLE IF EXISTS users;
 
@@ -27,4 +28,14 @@ CREATE TABLE tickets (
     -- Fremdschlüssel-Beziehungen (Verknüpfung zu den Usern)
     FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (assigned_to) REFERENCES users(id) ON DELETE SET NULL
+);
+
+CREATE TABLE comments (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id INT NOT NULL,
+    comment_text TEXT NOT NULL,
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (ticket_id) REFERENCES tickets(id) ON DELETE CASCADE,
+    FOREIGN KEY (created_by) REFERENCES users(id) ON DELETE CASCADE
 );

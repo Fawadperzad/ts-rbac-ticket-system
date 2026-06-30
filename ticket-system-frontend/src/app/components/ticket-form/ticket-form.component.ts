@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TicketService } from '../../services/ticket';
-import { Ticket } from '../../models/ticket.model';
+import type { Ticket } from '../../models/ticket.model';
 
 @Component({
   selector: 'app-ticket-form',
@@ -20,7 +20,7 @@ export class TicketFormComponent {
     title: '',
     description: '',
     status: 'OFFEN',
-    created_by: 3 // Hardcoded user ID for now until you have an auth system
+    created_by: 1
   };
 
   isSubmitting = false;
@@ -39,18 +39,20 @@ export class TicketFormComponent {
 
     this.ticketService.createTicket(this.newTicket).subscribe({
       next: () => {
-        this.isSubmitting = false;
-        // Reset the form fields
-        this.newTicket.title = '';
-        this.newTicket.description = '';
-        // Tell the parent component to refresh the list
+        this.resetForm();
         this.ticketCreated.emit();
       },
-      error: (error: any) => {
+      error: (error: unknown) => {
         console.error('Error creating ticket:', error);
         this.errorMessage = 'Failed to create ticket. Please check backend connection.';
         this.isSubmitting = false;
       }
     });
+  }
+
+  private resetForm(): void {
+    this.isSubmitting = false;
+    this.newTicket.title = '';
+    this.newTicket.description = '';
   }
 }

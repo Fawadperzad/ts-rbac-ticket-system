@@ -1,0 +1,46 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: ticket-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ticket_system
+      MYSQL_USER: ticketuser
+      MYSQL_PASSWORD: ticketpass
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./ticket-system-database/init-scripts:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.unified
+    container_name: ticket-app
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: ticketuser
+      DB_PASSWORD: ticketpass
+      DB_NAME: ticket_system
+      PORT: 3000
+      CORS_ORIGIN: '*'
+    ports:
+      - '3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+volumes:
+  mysql-data:

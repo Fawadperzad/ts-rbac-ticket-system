@@ -1,20 +1,26 @@
-// Bestehendes Interface (Beispiel)
+export interface User {
+  id: number;
+  username: string;
+  email: string;
+  role: 'USER' | 'AGENT' | 'ADMIN';
+}
+
 export interface Ticket {
-  id?: number;
+  id?: number; // Optional beim Erstellen, da die DB die ID vergibt
   title: string;
   description: string;
   status: 'OFFEN' | 'IN_BEARBEITUNG' | 'GESCHLOSSEN';
-  // ... restliche Felder
-  created_by?: number; // 👈 Dieses Feld als optional (?) hinzufügen
-  assigned_to?: number;
+  created_by: number;
+  assigned_to?: number | null;
   created_at?: string;
+  updated_at?: string;
 }
 
-// ERGÄNZUNG: Füge dieses Interface unten hinzu
-export interface TicketComment {
+export interface Comment {
   id?: number;
   ticket_id: number;
   comment_text: string;
   created_by: number;
+  username?: string; // Wird vom Backend per JOIN für die Anzeige mitgegeben
   created_at?: string;
 }
