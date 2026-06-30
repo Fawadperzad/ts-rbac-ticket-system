@@ -3,11 +3,13 @@
 A full-stack ticket management system built with Angular frontend, Node.js/Express backend, and MySQL database.
 
 ## 🌐 Live Demo
-**Live Application:** *Coming Soon - Currently runs locally*  
+
+**Live Application:** _Coming Soon - Currently runs locally_  
 **Local Demo:** `docker compose up --build` → http://localhost:8080
 **API Health Check:** http://localhost:3000/health
 
 ## 📊 Project Highlights
+
 - Built full-stack ticket management system
 - Implemented RESTful API with Express.js
 - Created responsive Angular frontend
@@ -41,17 +43,20 @@ A full-stack ticket management system built with Angular frontend, Node.js/Expre
 ## 🚀 Quick Start
 
 1. **Clone the repository**
+
    ```bash
    git clone <your-repo-url>
    cd mein-ticket-system
    ```
 
 2. **Set up environment variables**
+
    ```bash
    copy .env.example .env
    ```
 
 3. **Start with Docker Compose**
+
    ```bash
    docker compose up --build
    ```
@@ -64,17 +69,21 @@ A full-stack ticket management system built with Angular frontend, Node.js/Expre
 ## 🔧 Configuration Options
 
 ### Standard 3-Container Setup (Recommended)
+
 ```bash
 docker compose up --build
 ```
+
 - Separate containers for frontend, backend, and database
 - Nginx reverse proxy
 - Production-like architecture
 
 ### Single-Container Setup (Simplified)
+
 ```bash
 docker compose -f docker-compose.single.yml up --build
 ```
+
 - Everything served from port 3000
 - Simpler deployment
 - Good for development
@@ -86,6 +95,7 @@ docker compose -f docker-compose.single.yml up --build
    - `certs/privkey.pem`
 
 2. **Generate self-signed certificates for testing:**
+
    ```bash
    mkdir -p certs
    openssl req -x509 -nodes -newkey rsa:2048 -days 365 \
@@ -102,6 +112,7 @@ docker compose -f docker-compose.single.yml up --build
 ## 🗄 Database Schema
 
 The system includes:
+
 - **Users table**: User management with roles
 - **Tickets table**: Support tickets with status tracking
 - **Comments table**: Ticket discussion threads
@@ -113,6 +124,7 @@ Initial data is seeded automatically on first run.
 ### Local Development (without Docker)
 
 1. **Backend setup:**
+
    ```bash
    cd ticket-system-backend
    npm install
@@ -121,6 +133,7 @@ Initial data is seeded automatically on first run.
    ```
 
 2. **Frontend setup:**
+
    ```bash
    cd ticket-system-frontend
    npm install
@@ -146,9 +159,11 @@ Initial data is seeded automatically on first run.
 ## 🚀 Deployment Options
 
 ### Docker Compose (Recommended)
+
 Ready for production with proper container isolation and nginx proxy.
 
 ### PM2 (Node.js Process Manager)
+
 ```bash
 cd ticket-system-backend
 npm install
@@ -157,6 +172,7 @@ npm run start:prod
 ```
 
 ### Cloud Deployment
+
 - AWS ECS/Fargate with RDS
 - Google Cloud Run with Cloud SQL
 - Azure Container Instances with Azure Database
@@ -178,6 +194,7 @@ MIT License - see LICENSE file for details
 ### Common Issues
 
 **Port 3306 already in use:**
+
 ```bash
 # Stop local MySQL or change port in docker-compose.yml
 services:
@@ -187,11 +204,13 @@ services:
 ```
 
 **Backend can't connect to database:**
+
 - Ensure database container is healthy
 - Check environment variables in .env
 - Verify Docker network connectivity
 
 **Frontend not loading:**
+
 - Check if nginx container is running
 - Verify port 8080 is available
 - Check browser console for errors
@@ -201,6 +220,7 @@ For more issues, check the GitHub Issues page.
 ## 🎯 **For Recruiters & Hiring Managers**
 
 ### **Technical Skills Demonstrated:**
+
 - **Frontend:** Angular 18, TypeScript, Responsive Design, SPA Architecture
 - **Backend:** Node.js, Express.js, RESTful APIs, TypeScript
 - **Database:** MySQL, Database Design, SQL Queries, Data Relationships
@@ -208,6 +228,7 @@ For more issues, check the GitHub Issues page.
 - **Architecture:** Microservices, Reverse Proxy (Nginx), API Gateway Pattern
 
 ### **Key Features Implemented:**
+
 - ✅ User authentication & authorization
 - ✅ CRUD operations for tickets and comments
 - ✅ Role-based access control (USER/AGENT/ADMIN)
@@ -218,6 +239,7 @@ For more issues, check the GitHub Issues page.
 - ✅ API documentation and health monitoring
 
 ### **Production Readiness:**
+
 - 🐳 **Dockerized** - Ready for cloud deployment
 - 🔒 **Security** - Input validation, CORS configuration
 - 📊 **Monitoring** - Health checks, structured logging
@@ -225,6 +247,7 @@ For more issues, check the GitHub Issues page.
 - 🔄 **CI/CD Ready** - Container-based deployment pipeline
 
 ### **Quick Start for Review:**
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/mein-ticket-system
 cd mein-ticket-system
@@ -233,9 +256,11 @@ docker compose up --build
 ```
 
 ## 📧 **Contact**
-- **LinkedIn:** [Your LinkedIn Profile]
-- **Portfolio:** [Your Portfolio Website]
-- **Email:** [your.email@example.com]
+
+- **LinkedIn:** https://www.linkedin.com/in/fawad-fullstack/
+- **Portfolio:** https://github.com/Fawadperzad/fawad-perzad-portfolio
+- **Email:** fawad.perzad86@gmail.com
 
 ---
-*This project demonstrates full-stack development capabilities, modern deployment practices, and production-ready code suitable for enterprise environments.*
+
+_This project demonstrates full-stack development capabilities, modern deployment practices, and production-ready code suitable for enterprise environments._
