@@ -7,6 +7,8 @@ services:
       MYSQL_DATABASE: ticket_system
       MYSQL_USER: ticketuser
       MYSQL_PASSWORD: ticketpass
+    ports:
+      - '3307:3306'
     volumes:
       - mysql-data:/var/lib/mysql
       - ./ticket-system-database/init-scripts:/docker-entrypoint-initdb.d
