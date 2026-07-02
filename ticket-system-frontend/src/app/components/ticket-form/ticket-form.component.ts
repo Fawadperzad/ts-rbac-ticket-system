@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TicketService } from '../../services/ticket';
+import { AuthService } from '../../services/auth.service';
 import type { Ticket } from '../../models/ticket.model';
 
 @Component({
@@ -20,13 +21,15 @@ export class TicketFormComponent {
     title: '',
     description: '',
     status: 'OFFEN',
-    created_by: 1
+    created_by: 0
   };
 
   isSubmitting = false;
   errorMessage = '';
 
-  constructor(private ticketService: TicketService) {}
+  constructor(private ticketService: TicketService, private auth: AuthService) {
+    this.newTicket.created_by = this.auth.getUser()?.id ?? 1;
+  }
 
   onSubmit(): void {
     if (!this.newTicket.title || !this.newTicket.description) {

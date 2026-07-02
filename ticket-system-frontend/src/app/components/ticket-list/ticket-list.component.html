@@ -1,488 +1,125 @@
-<div
-  class="ticket-system-dashboard"
-  style="
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 0 20px;
-    font-family:
-      -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    color: #1e293b;
-  "
->
-  <header
-    style="
-      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-      border-radius: 12px;
-      padding: 24px;
-      margin-bottom: 32px;
-      box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -1px rgba(0, 0, 0, 0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 16px;
-    "
-  >
-    <div>
-      <h1
-        style="
-          color: #ffffff;
-          margin: 0 0 8px 0;
-          font-size: 24px;
-          font-weight: 700;
-          letter-spacing: -0.025em;
-        "
-      >
-        Support Command Center
-      </h1>
-      <p style="color: #94a3b8; margin: 0; font-size: 14px">
-        Manage tickets, replies, and system statuses seamlessly.
-      </p>
-    </div>
+<div class="ticket-system-dashboard" style="max-width: 900px; margin: 40px auto; padding: 0 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #1e293b;">
 
-    <div style="display: flex; align-items: center; gap: 16px">
-      <div style="display: flex; flex-direction: column; gap: 4px">
-        <label
-          for="userSelect"
-          style="
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #94a3b8;
-          "
-          >Simulate User Role</label
-        >
-        <select
-          id="userSelect"
-          (change)="onUserChange($event)"
-          style="
-            padding: 8px 16px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background: #1e293b;
-            color: #f8fafc;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            outline: none;
-            transition: border-color 0.2s;
-          "
-        >
-          <option value="">-- Guest Mode --</option>
-          @for (user of availableUsers; track user.id) {
-            <option [value]="user.username" [selected]="selectedUser?.id === user.id">
-              {{ user.username }} ({{ user.role }})
-            </option>
-          }
-        </select>
-      </div>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: #0f172a;">All Support Incidents</h2>
+    <span style="background: #e2e8f0; color: #475569; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 9999px;">
+      Total: {{ tickets.length }}
+    </span>
+  </div>
 
-      <div style="align-self: flex-end; height: 38px; display: flex; align-items: center">
-        @if (selectedUser) {
-          <span
-            style="
-              background: rgba(16, 185, 129, 0.15);
-              color: #34d399;
-              padding: 8px 14px;
-              border-radius: 8px;
-              font-size: 13px;
-              font-weight: 600;
-              border: 1px solid rgba(16, 185, 129, 0.2);
-            "
-          >
-            ● Active: {{ selectedUser.username }}
-          </span>
-        } @else {
-          <span
-            style="
-              background: rgba(239, 68, 68, 0.15);
-              color: #f87171;
-              padding: 8px 14px;
-              border-radius: 8px;
-              font-size: 13px;
-              font-weight: 600;
-              border: 1px solid rgba(239, 68, 68, 0.2);
-            "
-          >
-            ○ Read Only Mode
-          </span>
-        }
-      </div>
-    </div>
-  </header>
-
-  @if (!selectedUser) {
-    <div
-      style="
-        background: #fffbeb;
-        border-left: 4px solid #f59e0b;
-        padding: 16px;
-        border-radius: 8px;
-        margin-bottom: 32px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      "
-    >
-      <span style="font-size: 20px">⚠️</span>
-      <p style="margin: 0; font-size: 14px; color: #78350f; font-weight: 500">
-        You are currently in guest mode. Switch your identity above to create tickets or write
-        comments.
-      </p>
+  @if (isLoading) {
+    <div style="text-align: center; padding: 40px; color: #64748b;">
+      <p style="margin: 0; font-size: 15px; font-weight: 500;">Loading tickets...</p>
     </div>
   }
 
-  <main>
-    <div
-      style="
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-      "
-    >
-      <h2 style="font-size: 20px; font-weight: 700; margin: 0; color: #0f172a">
-        All Support Incidents
-      </h2>
-      <span
-        style="
-          background: #e2e8f0;
-          color: #475569;
-          font-size: 12px;
-          font-weight: 600;
-          padding: 4px 10px;
-          border-radius: 9999px;
-        "
-        >Total: {{ tickets.length }}</span
-      >
+  @if (errorMessage) {
+    <div style="background: #fef2f2; border: 1px solid #fca5a5; color: #991b1b; padding: 16px; border-radius: 8px; margin-bottom: 24px; font-size: 14px; font-weight: 500;">
+      {{ errorMessage }}
     </div>
+  }
 
-    @if (isLoading) {
-      <div style="text-align: center; padding: 40px; color: #64748b">
-        <p style="margin: 0; font-size: 15px; font-weight: 500">
-          Syncing data stream with MySQL...
-        </p>
-      </div>
-    }
+  @for (ticket of tickets; track ticket.id) {
+    <article style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px 0 rgba(0,0,0,0.05);">
 
-    @if (errorMessage) {
-      <div
-        style="
-          background: #fef2f2;
-          border: 1px solid #fca5a5;
-          color: #991b1b;
-          padding: 16px;
-          border-radius: 8px;
-          margin-bottom: 24px;
-          font-size: 14px;
-          font-weight: 500;
-        "
-      >
-        {{ errorMessage }}
-      </div>
-    }
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; margin-bottom: 16px;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;">
+            <span style="color: #94a3b8; font-size: 13px; font-family: monospace; font-weight: 600">#INC-00{{ ticket.id }}</span>
 
-    @for (ticket of tickets; track ticket.id) {
-      <article
-        style="
-          background: #ffffff;
-          border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          padding: 24px;
-          margin-bottom: 24px;
-          box-shadow:
-            0 1px 3px 0 rgba(0, 0, 0, 0.05),
-            0 1px 2px -1px rgba(0, 0, 0, 0.05);
-          transition: box-shadow 0.2s;
-        "
-      >
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            gap: 24px;
-            margin-bottom: 16px;
-          "
-        >
-          <div style="flex: 1">
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px">
-              <span
-                style="color: #94a3b8; font-size: 13px; font-family: monospace; font-weight: 600"
-                >#INC-00{{ ticket.id }}</span
-              >
-
-              @if (ticket.status === 'OFFEN') {
-                <span
-                  style="
-                    background: #eff6ff;
-                    color: #1d4ed8;
-                    font-size: 12px;
-                    font-weight: 600;
-                    padding: 2px 8px;
-                    border-radius: 6px;
-                    border: 1px solid #bfdbfe;
-                  "
-                  >Open</span
-                >
-              } @else if (ticket.status === 'IN_BEARBEITUNG') {
-                <span
-                  style="
-                    background: #fff7ed;
-                    color: #c2410c;
-                    font-size: 12px;
-                    font-weight: 600;
-                    padding: 2px 8px;
-                    border-radius: 6px;
-                    border: 1px solid #fed7aa;
-                  "
-                  >In Progress</span
-                >
-              } @else {
-                <span
-                  style="
-                    background: #f0fdf4;
-                    color: #166534;
-                    font-size: 12px;
-                    font-weight: 600;
-                    padding: 2px 8px;
-                    border-radius: 6px;
-                    border: 1px solid #bbf7d0;
-                  "
-                  >Resolved</span
-                >
-              }
-            </div>
-            <h3
-              style="
-                margin: 0 0 8px 0;
-                font-size: 18px;
-                font-weight: 600;
-                color: #0f172a;
-                letter-spacing: -0.01em;
-              "
-            >
-              {{ ticket.title }}
-            </h3>
-            <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #475569">
-              {{ ticket.description }}
-            </p>
+            @if (ticket.status === 'OFFEN') {
+              <span style="background: #eff6ff; color: #1d4ed8; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #bfdbfe;">Open</span>
+            } @else if (ticket.status === 'IN_BEARBEITUNG') {
+              <span style="background: #fff7ed; color: #c2410c; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #fed7aa;">In Progress</span>
+            } @else {
+              <span style="background: #f0fdf4; color: #166534; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #bbf7d0;">Resolved</span>
+            }
           </div>
-
-          @if (selectedUser?.role === 'ADMIN') {
-            <button
-              (click)="onDeleteTicket(ticket.id!)"
-              style="
-                background: transparent;
-                border: 1px solid #fca5a5;
-                color: #dc2626;
-                padding: 6px 12px;
-                border-radius: 6px;
-                font-size: 13px;
-                font-weight: 500;
-                cursor: pointer;
-                transition: all 0.2s;
-              "
-              onmouseover="this.style.background = '#fef2f2'"
-              onmouseout="this.style.background = 'transparent'"
-            >
-              Delete
-            </button>
-          }
+          <h3 style="margin: 0 0 8px 0; font-size: 18px; font-weight: 600; color: #0f172a;">{{ ticket.title }}</h3>
+          <p style="margin: 0; font-size: 14px; line-height: 1.5; color: #475569;">{{ ticket.description }}</p>
         </div>
 
-        <div
-          style="
-            padding: 12px 16px;
-            background: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-          "
-        >
-          <span style="font-size: 13px; font-weight: 600; color: #64748b"
-            >Ticket Lifecycle State</span
-          >
-
-          @if (selectedUser?.role === 'AGENT' || selectedUser?.role === 'ADMIN') {
-            <div style="display: flex; gap: 8px">
-              <button
-                [style.background]="ticket.status === 'OFFEN' ? '#3b82f6' : '#ffffff'"
-                [style.color]="ticket.status === 'OFFEN' ? '#ffffff' : '#475569'"
-                [style.border-color]="ticket.status === 'OFFEN' ? '#3b82f6' : '#cbd5e1'"
-                (click)="onStatusChange(ticket, 'OFFEN')"
-                style="
-                  padding: 6px 12px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  border-radius: 6px;
-                  border: 1px solid;
-                  cursor: pointer;
-                "
-              >
-                Open
-              </button>
-              <button
-                [style.background]="ticket.status === 'IN_BEARBEITUNG' ? '#f97316' : '#ffffff'"
-                [style.color]="ticket.status === 'IN_BEARBEITUNG' ? '#ffffff' : '#475569'"
-                [style.border-color]="ticket.status === 'IN_BEARBEITUNG' ? '#f97316' : '#cbd5e1'"
-                (click)="onStatusChange(ticket, 'IN_BEARBEITUNG')"
-                style="
-                  padding: 6px 12px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  border-radius: 6px;
-                  border: 1px solid;
-                  cursor: pointer;
-                "
-              >
-                Investigate
-              </button>
-              <button
-                [style.background]="ticket.status === 'GESCHLOSSEN' ? '#10b981' : '#ffffff'"
-                [style.color]="ticket.status === 'GESCHLOSSEN' ? '#ffffff' : '#475569'"
-                [style.border-color]="ticket.status === 'GESCHLOSSEN' ? '#10b981' : '#cbd5e1'"
-                (click)="onStatusChange(ticket, 'GESCHLOSSEN')"
-                style="
-                  padding: 6px 12px;
-                  font-size: 12px;
-                  font-weight: 500;
-                  border-radius: 6px;
-                  border: 1px solid;
-                  cursor: pointer;
-                "
-              >
-                Close
-              </button>
-            </div>
-          } @else {
-            <span style="font-size: 13px; font-weight: 500; color: #334155"
-              >Managed by Staff Only</span
-            >
-          }
-        </div>
-
-        <div class="comments-section" style="border-top: 1px solid #f1f5f9; padding-top: 20px">
-          <h4
-            style="
-              font-size: 14px;
-              font-weight: 600;
-              color: #475569;
-              margin: 0 0 12px 0;
-              display: flex;
-              align-items: center;
-              gap: 6px;
-            "
-          >
-            <span>Activity Logs</span>
-            <span
-              style="
-                font-size: 11px;
-                background: #f1f5f9;
-                color: #475569;
-                padding: 2px 6px;
-                border-radius: 4px;
-              "
-              >{{ ticketComments[ticket.id!]?.length || 0 }}</span
-            >
-          </h4>
-
-          @if (ticketComments[ticket.id!] && ticketComments[ticket.id!].length > 0) {
-            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px">
-              @for (comment of ticketComments[ticket.id!]; track comment.id) {
-                <div
-                  style="
-                    background: #f8fafc;
-                    border: 1px solid #f1f5f9;
-                    padding: 12px 14px;
-                    border-radius: 8px;
-                  "
-                >
-                  <p style="margin: 0 0 6px 0; font-size: 13px; color: #334155; line-height: 1.4">
-                    {{ comment.comment_text }}
-                  </p>
-                  <div
-                    style="
-                      display: flex;
-                      gap: 8px;
-                      font-size: 11px;
-                      color: #94a3b8;
-                      font-weight: 500;
-                    "
-                  >
-                    <span>By Agent #{{ comment.created_by }}</span>
-                  </div>
-                </div>
-              }
-            </div>
-          } @else {
-            <p style="color: #94a3b8; font-size: 13px; font-style: italic; margin-bottom: 16px">
-              No activity logged yet on this issue.
-            </p>
-          }
-
-          @if (selectedUser) {
-            <div style="display: flex; gap: 8px; margin-top: 12px">
-              <input
-                type="text"
-                [(ngModel)]="newComments[ticket.id!]"
-                placeholder="Type a professional update..."
-                style="
-                  flex: 1;
-                  padding: 10px 14px;
-                  border: 1px solid #cbd5e1;
-                  border-radius: 8px;
-                  font-size: 13px;
-                  outline: none;
-                  transition: border-color 0.2s;
-                  background: #ffffff;
-                "
-                onfocus="this.style.borderColor = '#3b82f6'"
-                onblur="this.style.borderColor = '#cbd5e1'"
-              />
-              <button
-                (click)="onSubmitComment(ticket.id!)"
-                style="
-                  background: #2563eb;
-                  color: #ffffff;
-                  border: none;
-                  padding: 10px 18px;
-                  border-radius: 8px;
-                  font-size: 13px;
-                  font-weight: 600;
-                  cursor: pointer;
-                  transition: background 0.2s;
-                "
-                onmouseover="this.style.background = '#1d4ed8'"
-                onmouseout="this.style.background = '#2563eb'"
-              >
-                Dispatch
-              </button>
-            </div>
-          }
-        </div>
-      </article>
-    } @empty {
-      <div
-        style="
-          text-align: center;
-          padding: 60px 20px;
-          background: #ffffff;
-          border: 1px dashed #cbd5e1;
-          border-radius: 12px;
-          color: #64748b;
-        "
-      >
-        <p style="margin: 0; font-size: 15px; font-weight: 500">
-          Zero incidents reported in tracking database.
-        </p>
+        @if (currentUser?.role === 'ADMIN') {
+          <button (click)="onDeleteTicket(ticket.id!)"
+            style="background: transparent; border: 1px solid #fca5a5; color: #dc2626; padding: 6px 12px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer;"
+            onmouseover="this.style.background='#fef2f2'" onmouseout="this.style.background='transparent'">
+            Delete
+          </button>
+        }
       </div>
-    }
-  </main>
+
+      <div style="padding: 12px 16px; background: #f8fafc; border-radius: 8px; border: 1px solid #f1f5f9; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+        <span style="font-size: 13px; font-weight: 600; color: #64748b;">Status</span>
+
+        @if (currentUser?.role === 'AGENT' || currentUser?.role === 'ADMIN') {
+          <div style="display: flex; gap: 8px;">
+            <button [style.background]="ticket.status === 'OFFEN' ? '#3b82f6' : '#ffffff'"
+              [style.color]="ticket.status === 'OFFEN' ? '#ffffff' : '#475569'"
+              [style.border-color]="ticket.status === 'OFFEN' ? '#3b82f6' : '#cbd5e1'"
+              (click)="onStatusChange(ticket, 'OFFEN')"
+              style="padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid; cursor: pointer;">
+              Open
+            </button>
+            <button [style.background]="ticket.status === 'IN_BEARBEITUNG' ? '#f97316' : '#ffffff'"
+              [style.color]="ticket.status === 'IN_BEARBEITUNG' ? '#ffffff' : '#475569'"
+              [style.border-color]="ticket.status === 'IN_BEARBEITUNG' ? '#f97316' : '#cbd5e1'"
+              (click)="onStatusChange(ticket, 'IN_BEARBEITUNG')"
+              style="padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid; cursor: pointer;">
+              In Progress
+            </button>
+            <button [style.background]="ticket.status === 'GESCHLOSSEN' ? '#10b981' : '#ffffff'"
+              [style.color]="ticket.status === 'GESCHLOSSEN' ? '#ffffff' : '#475569'"
+              [style.border-color]="ticket.status === 'GESCHLOSSEN' ? '#10b981' : '#cbd5e1'"
+              (click)="onStatusChange(ticket, 'GESCHLOSSEN')"
+              style="padding: 6px 12px; font-size: 12px; font-weight: 500; border-radius: 6px; border: 1px solid; cursor: pointer;">
+              Close
+            </button>
+          </div>
+        } @else {
+          <span style="font-size: 13px; font-weight: 500; color: #334155;">Managed by Staff Only</span>
+        }
+      </div>
+
+      <div style="border-top: 1px solid #f1f5f9; padding-top: 20px;">
+        <h4 style="font-size: 14px; font-weight: 600; color: #475569; margin: 0 0 12px 0;">
+          Comments
+          <span style="font-size: 11px; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">
+            {{ ticketComments[ticket.id!]?.length || 0 }}
+          </span>
+        </h4>
+
+        @if ((ticketComments[ticket.id!]?.length ?? 0) > 0) {
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+            @for (comment of ticketComments[ticket.id!]; track comment.id) {
+              <div style="background: #f8fafc; border: 1px solid #f1f5f9; padding: 12px 14px; border-radius: 8px;">
+                <p style="margin: 0 0 6px 0; font-size: 13px; color: #334155; line-height: 1.4;">{{ comment.comment_text }}</p>
+                <span style="font-size: 11px; color: #94a3b8; font-weight: 500;">By {{ comment.username || 'User #' + comment.created_by }}</span>
+              </div>
+            }
+          </div>
+        } @else {
+          <p style="color: #94a3b8; font-size: 13px; font-style: italic; margin-bottom: 16px;">No comments yet.</p>
+        }
+
+        @if (currentUser) {
+          <div style="display: flex; gap: 8px; margin-top: 12px;">
+            <input type="text" [(ngModel)]="newComments[ticket.id!]" placeholder="Write a comment..."
+              style="flex: 1; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 13px; outline: none;"
+              onfocus="this.style.borderColor='#3b82f6'" onblur="this.style.borderColor='#cbd5e1'" />
+            <button (click)="onSubmitComment(ticket.id!)"
+              style="background: #2563eb; color: #ffffff; border: none; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;"
+              onmouseover="this.style.background='#1d4ed8'" onmouseout="this.style.background='#2563eb'">
+              Post
+            </button>
+          </div>
+        }
+      </div>
+
+    </article>
+  } @empty {
+    <div style="text-align: center; padding: 60px 20px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
+      <p style="margin: 0; font-size: 15px; font-weight: 500;">No tickets found.</p>
+    </div>
+  }
+
 </div>

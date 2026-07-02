@@ -1,54 +1,42 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
+import { runtimeConfig } from '../../environments/runtime-config';
+import type { User } from '../models/ticket.model';
 
-export interface User {
-  id: number;
-  username: string;
-  role: string; // 'USER', 'AGENT', 'ADMIN'
-}
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api';
-  
-  // Speichert den aktuell eingeloggten User (Standard: null)
-  private currentUserSubject = new BehaviorSubject<User | null>(null);
-  public currentUser$ = this.currentUserSubject.asObservable();
+  private apiUrl = runtimeConfig.apiUrl || environment.apiUrl;
 
-  constructor(private http: HttpClient) {
-    // Versuche den User aus dem SessionStorage zu laden, falls die Seite neu geladen wird
-    const savedUser = sessionStorage.getItem('currentUser');
-    if (savedUser) {
-      this.currentUserSubject.next(JSON.parse(savedUser));
-    }
-  }
+  constructor(private http: HttpClient, private router: Router) {}
 
-  // Alle User für das Auswahl-Menü laden
-  getAvailableUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.apiUrl}/users`);
-  }
-
-  // Einloggen
-  login(username: string): Observable<User> {
-    return this.http.post<User>(`${this.apiUrl}/login`, { username }).pipe(
-      tap(user => {
-        sessionStorage.setItem('currentUser', JSON.stringify(user));
-        this.currentUserSubject.next(user);
+  login(email: string, password: string) {
+    return this.http.post<{ token: string; user: User }>(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap(res => {
+        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.user));
       })
     );
   }
 
-  // Ausloggen
-  logout() {
-    sessionStorage.removeItem('currentUser');
-    this.currentUserSubject.next(null);
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
   }
 
-  // Hilfsmethode, um den aktuellen User-Wert direkt zu bekommen
-  getCurrentUserValue(): User | null {
-    return this.currentUserSubject.value;
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  getUser(): User | null {
+    const u = localStorage.getItem('user');
+    return u ? JSON.parse(u) : null;
+  }
+
+  isLoggedIn(): boolean {
+    return !!this.getToken();
   }
 }

@@ -1,3 +1,3 @@
 window.__APP_CONFIG__ = {
-  apiUrl: window.location.origin + '/api'
+  apiUrl: 'http://localhost:3000/api'
 };
