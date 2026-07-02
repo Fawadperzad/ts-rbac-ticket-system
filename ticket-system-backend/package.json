@@ -17,10 +17,13 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/bcrypt": "^6.0.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^4.17.25",
-    "@types/node": "^20.0.0",
     "@types/jest": "^29.5.12",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/multer": "^2.1.0",
+    "@types/node": "^20.0.0",
     "@types/supertest": "^6.0.2",
     "cross-env": "^10.1.0",
     "jest": "^29.7.0",
@@ -31,10 +34,13 @@
     "typescript": "^5.0.0"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "multer": "^2.2.0",
     "mysql2": "^3.22.5",
-    "pm2": "^5.4.2"
+    "pm2": "^7.0.3"
   }
 }

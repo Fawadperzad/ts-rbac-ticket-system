@@ -3,6 +3,9 @@ import type { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import type { RowDataPacket, ResultSetHeader } from 'mysql2';
 import db, { verifyDatabaseConnection } from './db.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import 'dotenv/config';
 
 // Interfaces für Typensicherheit deklarieren
 interface User extends RowDataPacket {
@@ -68,18 +71,31 @@ app.get('/api/users', async (req: Request, res: Response) => {
   }
 });
 
-// B) Mock Login
+// B) JWT Login
 app.post('/api/login', async (req: Request, res: Response) => {
-  const { username } = req.body;
-  if (!username) {
-    return res.status(400).json({ error: 'Username is required' });
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ error: 'Email and password are required' });
   }
   try {
-    const [rows] = await db.query<User[]>('SELECT id, username, role FROM users WHERE username = ?', [username]);
+    const [rows] = await db.query<(User & { password_hash: string })[]>(
+      'SELECT id, username, email, role, password_hash FROM users WHERE email = ?',
+      [email]
+    );
     if (rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
-    res.json(rows[0]);
+    const user = rows[0]!;
+    const valid = await bcrypt.compare(password, user.password_hash);
+    if (!valid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    const token = jwt.sign(
+      { id: user.id, username: user.username, role: user.role },
+      process.env.JWT_SECRET as string,
+      { expiresIn: '8h' }
+    );
+    res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
   } catch (error) {
     console.error('❌ Login Fehler:', error);
     res.status(500).json({ error: 'Login failed' });
