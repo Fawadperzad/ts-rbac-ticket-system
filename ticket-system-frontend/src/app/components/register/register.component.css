@@ -1,4 +1,4 @@
-.login-wrapper {
+.register-wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -6,7 +6,7 @@
   background: #f0f2f5;
 }
 
-.login-card {
+.register-card {
   background: white;
   padding: 2.5rem;
   border-radius: 12px;
@@ -45,6 +45,9 @@ button {
 button:hover:not(:disabled) { background: #4338ca; }
 button:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.register-link { text-align: center; margin-top: 1.25rem; font-size: 0.875rem; color: #666; }
-.register-link a { color: #4f46e5; text-decoration: none; font-weight: 600; }
-.register-link a:hover { text-decoration: underline; }
+.error { color: #dc2626; font-size: 0.875rem; margin: 0.5rem 0; }
+.success { color: #16a34a; font-size: 0.875rem; margin: 0.5rem 0; }
+
+.login-link { text-align: center; margin-top: 1.25rem; font-size: 0.875rem; color: #666; }
+.login-link a { color: #4f46e5; text-decoration: none; font-weight: 600; }
+.login-link a:hover { text-decoration: underline; }

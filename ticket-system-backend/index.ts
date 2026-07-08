@@ -71,6 +71,35 @@ app.get('/api/users', async (req: Request, res: Response) => {
   }
 });
 
+// C) Register
+app.post('/api/register', async (req: Request, res: Response) => {
+  const { username, email, password } = req.body;
+  if (!username || !email || !password) {
+    return res.status(400).json({ error: 'Username, email and password are required' });
+  }
+  if (password.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+  try {
+    const [existing] = await db.query<User[]>(
+      'SELECT id FROM users WHERE email = ? OR username = ?',
+      [email, username]
+    );
+    if (existing.length > 0) {
+      return res.status(409).json({ error: 'Username or email already exists' });
+    }
+    const password_hash = await bcrypt.hash(password, 10);
+    await db.query(
+      'INSERT INTO users (username, email, password_hash, role) VALUES (?, ?, ?, ?)',
+      [username, email, password_hash, 'USER']
+    );
+    res.status(201).json({ message: 'Registration successful. You can now log in.' });
+  } catch (error) {
+    console.error('❌ Register Fehler:', error);
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
 // B) JWT Login
 app.post('/api/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -234,6 +263,51 @@ app.delete('/api/tickets/:id', async (req: Request, res: Response) => {
   } catch (err) {
     console.error('Datenbankfehler beim Löschen des Tickets:', err);
     res.status(500).json({ error: 'Fehler beim Löschen des Tickets' });
+  }
+});
+
+// ==========================================
+// 5. ADMIN ROUTES
+// ==========================================
+
+// A) All users
+app.get('/api/admin/users', async (req: Request, res: Response) => {
+  try {
+    const [rows] = await db.query<User[]>('SELECT id, username, email, role, created_at FROM users ORDER BY id ASC');
+    res.json(rows);
+  } catch (error) {
+    console.error('❌ Fehler beim Laden der Benutzer:', error);
+    res.status(500).json({ error: 'Failed to load users' });
+  }
+});
+
+// B) Change user role
+app.put('/api/admin/users/:id/role', async (req: Request, res: Response) => {
+  const { role } = req.body;
+  const validRoles = ['USER', 'AGENT', 'ADMIN'];
+  if (!role || !validRoles.includes(role)) {
+    return res.status(400).json({ error: 'Invalid role' });
+  }
+  try {
+    const [result] = await db.query<ResultSetHeader>(
+      'UPDATE users SET role = ? WHERE id = ?',
+      [role, req.params.id]
+    );
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'User not found' });
+    res.json({ message: 'Role updated successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update role' });
+  }
+});
+
+// C) Delete user
+app.delete('/api/admin/users/:id', async (req: Request, res: Response) => {
+  try {
+    const [result] = await db.query<ResultSetHeader>('DELETE FROM users WHERE id = ?', [req.params.id]);
+    if (result.affectedRows === 0) return res.status(404).json({ error: 'User not found' });
+    res.status(204).send();
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete user' });
   }
 });
 

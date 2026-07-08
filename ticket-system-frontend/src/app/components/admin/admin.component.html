@@ -1,0 +1,49 @@
+<div class="admin-container">
+  <h2>👥 User Management</h2>
+
+  @if (isLoading) {
+    <p class="loading">Loading users...</p>
+  }
+
+  @if (errorMessage) {
+    <p class="error">{{ errorMessage }}</p>
+  }
+
+  @if (!isLoading) {
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+              <td>{{ user.id }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <select [ngModel]="user.role" (ngModelChange)="onRoleChange(user, $event)" class="role-select">
+                  <option value="USER">USER</option>
+                  <option value="AGENT">AGENT</option>
+                  <option value="ADMIN">ADMIN</option>
+                </select>
+              </td>
+              <td>
+                <button class="btn-delete" (click)="onDeleteUser(user.id)"
+                  [disabled]="user.id === auth.getUser()?.id">
+                  Delete
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

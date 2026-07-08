@@ -26,6 +26,12 @@
   font-weight: 600;
 }
 
-.user-info button:hover {
-  background: #e0e7ff;
+.admin-link {
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.15);
 }
+.admin-link:hover { background: rgba(255,255,255,0.25); }

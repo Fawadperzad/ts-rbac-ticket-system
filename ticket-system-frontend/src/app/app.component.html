@@ -2,6 +2,10 @@
   <div class="app-header">
     <span>🎫 Ticket System</span>
     <div class="user-info">
+      @if (auth.getUser()?.role === 'ADMIN') {
+        <a routerLink="/admin" class="admin-link">Admin Panel</a>
+      }
+      <a routerLink="/" class="admin-link">Tickets</a>
       <span>{{ auth.getUser()?.username }}</span>
       <button (click)="auth.logout()">Logout</button>
     </div>
