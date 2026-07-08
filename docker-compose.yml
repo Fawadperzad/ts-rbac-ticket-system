@@ -13,11 +13,11 @@ services:
       - mysql-data:/var/lib/mysql
       - ./ticket-system-database/init-scripts:/docker-entrypoint-initdb.d
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-proot"]
-      interval: 10s
+      test: ["CMD", "mysql", "-uroot", "-proot", "-e", "SELECT 1 FROM ticket_system.users LIMIT 1;"]
+      interval: 5s
       timeout: 5s
-      retries: 10
-      start_period: 30s
+      retries: 20
+      start_period: 60s
 
   backend:
     build:
@@ -32,6 +32,8 @@ services:
       DB_NAME: ticket_system
       PORT: 3000
       CORS_ORIGIN: '*'
+      JWT_SECRET: your_super_secret_jwt_key_change_in_production
+    restart: on-failure
     ports:
       - '3000:3000'
     depends_on:

@@ -47,6 +47,13 @@ export class TicketListComponent implements OnInit {
     });
   }
 
+  addTicket(ticket: Ticket): void {
+    this.tickets.unshift(ticket);
+    if (ticket.id !== undefined) {
+      this.ticketComments[ticket.id] = [];
+    }
+  }
+
   loadComments(ticketId: number): void {
     this.ticketService.getComments(ticketId).subscribe({
       next: (comments: Comment[]) => { this.ticketComments[ticketId] = comments; },

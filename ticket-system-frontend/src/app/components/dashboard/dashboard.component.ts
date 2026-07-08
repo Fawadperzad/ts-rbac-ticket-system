@@ -9,7 +9,7 @@ import { TicketListComponent } from '../ticket-list/ticket-list.component';
   imports: [CommonModule, TicketFormComponent, TicketListComponent],
   template: `
     <div class="dashboard-container">
-      <section><app-ticket-form (ticketCreated)="ticketList.loadTickets()"></app-ticket-form></section>
+      <section><app-ticket-form (ticketCreated)="ticketList.addTicket($event)"></app-ticket-form></section>
       <main><app-ticket-list #ticketList></app-ticket-list></main>
     </div>
   `,

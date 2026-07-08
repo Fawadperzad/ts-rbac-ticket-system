@@ -10,8 +10,8 @@ SET FOREIGN_KEY_CHECKS = 1;
 INSERT INTO users (username, email, password_hash, role) VALUES
 ('admin_max', 'admin@ticketsystem.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy', 'ADMIN'),
 ('agent_sarah', 'sarah.support@ticketsystem.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy', 'AGENT'),
-('user_luca', 'luca.kunde@web.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy'),
-('user_julia', 'julia.meier@gmx.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy');
+('user_luca', 'luca.kunde@web.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy', 'USER'),
+('user_julia', 'julia.meier@gmx.de', '$2b$10$WF.szQJNx3Ta.caQYIPN0uOythkIHlSIU88vaYVBXtz5IDTfPKTcy', 'USER');
 
 -- 3. Test-Tickets einfügen (ID 1 = admin_max, ID 2 = agent_sarah, ID 3 = user_luca, ID 4 = user_julia)
 INSERT INTO tickets (title, description, status, created_by, assigned_to) VALUES

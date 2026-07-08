@@ -14,7 +14,7 @@ import type { Ticket } from '../../models/ticket.model';
 })
 export class TicketFormComponent {
   // Event to notify the parent (AppComponent) that a new ticket was successfully created
-  @Output() ticketCreated = new EventEmitter<void>();
+  @Output() ticketCreated = new EventEmitter<Ticket>();
 
   // Temporary model for the form data
   newTicket: Ticket = {
@@ -41,9 +41,9 @@ export class TicketFormComponent {
     this.errorMessage = '';
 
     this.ticketService.createTicket(this.newTicket).subscribe({
-      next: () => {
+      next: (created: Ticket) => {
         this.resetForm();
-        this.ticketCreated.emit();
+        this.ticketCreated.emit(created);
       },
       error: (error: unknown) => {
         console.error('Error creating ticket:', error);
