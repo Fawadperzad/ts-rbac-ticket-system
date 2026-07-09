@@ -1,5 +1,7 @@
 # Ticket System 🎫
 
+[![CI](https://github.com/Fawadperzad/ts-rbac-ticket-system/actions/workflows/ci.yml/badge.svg)](https://github.com/Fawadperzad/ts-rbac-ticket-system/actions/workflows/ci.yml) [![CD](https://github.com/Fawadperzad/ts-rbac-ticket-system/actions/workflows/cd.yml/badge.svg)](https://github.com/Fawadperzad/ts-rbac-ticket-system/actions/workflows/cd.yml)
+
 A full-stack ticket management system built with Angular frontend, Node.js/Express backend, and MySQL database.
 
 ## 🌐 Live Demo
@@ -122,6 +124,7 @@ Initial data is seeded automatically on first run.
 ## 🧪 Testing
 
 ### Backend Testing (Jest)
+
 The backend uses Jest for comprehensive testing with 11 passing tests:
 
 ```bash
@@ -132,12 +135,14 @@ npm run test:coverage   # Run tests with coverage report
 ```
 
 **Backend Test Coverage:**
+
 - **Data Validation**: Ticket structure, required fields, status values, user roles
 - **Business Logic**: Status transitions, comment validation, email format
 - **API Structure**: Endpoint format validation, HTTP methods
 - **Utility Functions**: Timestamp generation, string trimming
 
 ### Frontend Testing (Node.js Standalone)
+
 The frontend tests use a standalone Node.js approach with 12 passing tests:
 
 ```bash
@@ -146,19 +151,23 @@ node test-standalone.js  # Run all frontend tests (12 tests)
 ```
 
 **Frontend Test Coverage:**
+
 - **Model Validation**: User structure, email format, roles, ticket validation
 - **Form Logic**: Login form, ticket form validation
 - **State Management**: Authentication state, ticket filtering
 - **API Configuration**: Endpoint building, error handling
 
 ### Total Test Coverage
+
 - **Backend Tests**: 11 passing (Jest)
 - **Frontend Tests**: 12 passing (Node.js)
 - **Total Tests**: 23 passing tests
 - **Coverage**: Complete validation, business logic, and API testing
 
 ### Test Reports
+
 After running backend coverage:
+
 ```bash
 cd ticket-system-backend
 npm run test:coverage
@@ -166,7 +175,9 @@ open coverage/lcov-report/index.html  # View detailed coverage
 ```
 
 ### Continuous Integration
+
 Both test suites are ready for CI/CD integration:
+
 ```bash
 # Full test suite
 npm run test:all         # Runs both backend and frontend tests
